@@ -1,0 +1,64 @@
+[gd_scene load_steps=10 format=3 uid="uid://caovinjy0dr1d"]
+
+[ext_resource type="Script" path="res://player/player.gd" id="1_ra8as"]
+[ext_resource type="Texture2D" uid="uid://dnl5p2pqxr6lp" path="res://icon.svg" id="2_6dobr"]
+[ext_resource type="Script" path="res://FSM/FiniteStateMachine.gd" id="3_ggq3p"]
+[ext_resource type="Script" path="res://FSM/player_state/Idle.gd" id="4_vc36p"]
+[ext_resource type="Script" path="res://FSM/player_state/Move.gd" id="5_2se0c"]
+[ext_resource type="Script" path="res://FSM/player_state/Attack.gd" id="6_381e1"]
+[ext_resource type="PackedScene" uid="uid://cdmg6hcebcvdw" path="res://debug/debug_layer.tscn" id="7_noj2m"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_prcoo"]
+radius = 40.0
+height = 160.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fgrjj"]
+size = Vector2(200, 160)
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_ra8as")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+position = Vector2(-9.53674e-07, -3.8147e-06)
+scale = Vector2(0.625, 1.25)
+texture = ExtResource("2_6dobr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_prcoo")
+
+[node name="AttackArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(40, 0)
+shape = SubResource("RectangleShape2D_fgrjj")
+
+[node name="JugglePoint" type="Marker2D" parent="."]
+
+[node name="FSM" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("3_ggq3p")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("4_vc36p")
+
+[node name="Move" type="Node" parent="FSM"]
+script = ExtResource("5_2se0c")
+
+[node name="Attack" type="Node" parent="FSM"]
+script = ExtResource("6_381e1")
+
+[node name="IdleBufferTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.2
+one_shot = true
+
+[node name="AttackDurationTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.3
+one_shot = true
+
+[node name="DebugLayer" parent="." instance=ExtResource("7_noj2m")]
+
+[connection signal="timeout" from="IdleBufferTimer" to="FSM/Idle" method="_on_idle_buffer_timer_timeout"]
