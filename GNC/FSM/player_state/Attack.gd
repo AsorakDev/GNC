@@ -21,10 +21,12 @@ func stateUpdate(delta):
 func stateExit():
 	collision_shape_2d.disabled = true
 	
-func attack(delta):
+func attack(_delta):
 	player.velocity.x = player.boost_speed * player.direction
 	
 func transition():
 	if attack_duration_timer.is_stopped():
-		if not Input.is_action_pressed("LM") and not Input.is_action_pressed("RM"):
-			state_transition.emit(self, "Idle")
+		state_transition.emit(self, "Idle")
+	
+	if Input.is_action_pressed("LM") and Input.is_action_pressed("RM"):
+		state_transition.emit(self, "Slide")

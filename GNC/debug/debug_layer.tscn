@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://debug/DebugLayer.gd" id="1_qsvbt"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_8da4b"]
-font_size = 32
+font_size = 64
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 

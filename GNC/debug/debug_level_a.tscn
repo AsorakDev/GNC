@@ -1,23 +1,27 @@
-[gd_scene load_steps=4 format=3 uid="uid://bt2fa5mu37jdy"]
+[gd_scene load_steps=5 format=3 uid="uid://bt2fa5mu37jdy"]
 
 [ext_resource type="PackedScene" uid="uid://caovinjy0dr1d" path="res://player/player.tscn" id="1_k1var"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7xwgv"]
-size = Vector2(1920, 40)
+size = Vector2(1760, 40)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7lj6s"]
 size = Vector2(20, 60)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fx8fo"]
+size = Vector2(4160, 40)
+
 [node name="DebugLevelA" type="Node2D"]
 
 [node name="Floor" type="StaticBody2D" parent="."]
+collision_mask = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
-position = Vector2(-160, 1420)
+position = Vector2(-240, 1420)
 shape = SubResource("RectangleShape2D_7xwgv")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Floor"]
-position = Vector2(2080, 1420)
+position = Vector2(2160, 1420)
 shape = SubResource("RectangleShape2D_7xwgv")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="Floor"]
@@ -28,7 +32,17 @@ shape = SubResource("RectangleShape2D_7lj6s")
 position = Vector2(3030, 1370)
 shape = SubResource("RectangleShape2D_7lj6s")
 
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="Floor"]
+position = Vector2(960, 1740)
+shape = SubResource("RectangleShape2D_fx8fo")
+
 [node name="Player" parent="." instance=ExtResource("1_k1var")]
 position = Vector2(-1000, 1320)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(1.25, 1.25)
+process_callback = 0
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true

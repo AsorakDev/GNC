@@ -4,12 +4,12 @@ class_name Player
 var facing_direction : int = 1
 var direction : int = 0
 
-var move_speed : float = 1200
-var boost_speed : float = 1800
+var move_speed : float = 900
+var boost_speed : float = 1200
 
 var ignore_gravity : bool = false
 var max_gravity : float = 1800
-var gravity : float = 3600
+var gravity : float = 5600
 
 func _physics_process(delta):
 	get_direction()
@@ -18,10 +18,17 @@ func _physics_process(delta):
 	move_and_slide()
 
 func get_direction():
-	if direction == 1:		facing_direction = 1
-	elif direction == -1:	facing_direction = -1
+	if is_on_floor():
+		if direction == 1:		facing_direction = 1
+		elif direction == -1:	facing_direction = -1
 func apply_gravity(delta):
 	if not ignore_gravity:
 		velocity.y = move_toward(velocity.y, max_gravity, delta * gravity)
-func control_camera(delta):
+		
+	if velocity.y < 0:
+		gravity = 2400
+	elif velocity.y > 0:
+		gravity = 5600
+		
+func control_camera(_delta):
 	pass

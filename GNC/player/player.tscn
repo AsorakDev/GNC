@@ -1,40 +1,54 @@
-[gd_scene load_steps=10 format=3 uid="uid://caovinjy0dr1d"]
+[gd_scene load_steps=14 format=3 uid="uid://caovinjy0dr1d"]
 
 [ext_resource type="Script" path="res://player/player.gd" id="1_ra8as"]
 [ext_resource type="Texture2D" uid="uid://dnl5p2pqxr6lp" path="res://icon.svg" id="2_6dobr"]
 [ext_resource type="Script" path="res://FSM/FiniteStateMachine.gd" id="3_ggq3p"]
 [ext_resource type="Script" path="res://FSM/player_state/Idle.gd" id="4_vc36p"]
 [ext_resource type="Script" path="res://FSM/player_state/Move.gd" id="5_2se0c"]
+[ext_resource type="Script" path="res://FSM/player_state/Slide.gd" id="5_fvn0w"]
+[ext_resource type="Script" path="res://FSM/player_state/Jump.gd" id="6_7x3jf"]
 [ext_resource type="Script" path="res://FSM/player_state/Attack.gd" id="6_381e1"]
 [ext_resource type="PackedScene" uid="uid://cdmg6hcebcvdw" path="res://debug/debug_layer.tscn" id="7_noj2m"]
+[ext_resource type="Script" path="res://FSM/player_state/Stomp.gd" id="9_dkhic"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_prcoo"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mp3jh"]
 radius = 40.0
 height = 160.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hsymf"]
+radius = 40.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fgrjj"]
 size = Vector2(200, 160)
 
 [node name="Player" type="CharacterBody2D"]
+collision_layer = 2
 script = ExtResource("1_ra8as")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0, 0, 0, 1)
-self_modulate = Color(0, 0, 0, 1)
+modulate = Color(0, 1, 0, 1)
 position = Vector2(-9.53674e-07, -3.8147e-06)
 scale = Vector2(0.625, 1.25)
 texture = ExtResource("2_6dobr")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CapsuleShape2D_prcoo")
+[node name="CollisionStanding" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_mp3jh")
+
+[node name="CollisionSliding" type="CollisionShape2D" parent="."]
+position = Vector2(0, -40)
+shape = SubResource("CircleShape2D_hsymf")
+disabled = true
 
 [node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
 position = Vector2(40, 0)
 shape = SubResource("RectangleShape2D_fgrjj")
 
 [node name="JugglePoint" type="Marker2D" parent="."]
+position = Vector2(80, 0)
 
 [node name="FSM" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_ggq3p")
@@ -43,15 +57,44 @@ initial_state = NodePath("Idle")
 [node name="Idle" type="Node" parent="FSM"]
 script = ExtResource("4_vc36p")
 
+[node name="Slide" type="Node" parent="FSM"]
+script = ExtResource("5_fvn0w")
+
+[node name="Jump" type="Node" parent="FSM"]
+script = ExtResource("6_7x3jf")
+
 [node name="Move" type="Node" parent="FSM"]
 script = ExtResource("5_2se0c")
 
 [node name="Attack" type="Node" parent="FSM"]
 script = ExtResource("6_381e1")
 
+[node name="Stomp" type="Node" parent="FSM"]
+script = ExtResource("9_dkhic")
+
+[node name="CoyoteTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.2
+one_shot = true
+
 [node name="IdleBufferTimer" type="Timer" parent="."]
 process_callback = 0
 wait_time = 0.2
+one_shot = true
+
+[node name="SlideBufferTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.2
+one_shot = true
+
+[node name="MoveBufferTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.2
+one_shot = true
+
+[node name="SlideChargeTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.3
 one_shot = true
 
 [node name="AttackDurationTimer" type="Timer" parent="."]
@@ -59,6 +102,19 @@ process_callback = 0
 wait_time = 0.3
 one_shot = true
 
+[node name="StompChargeUpTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.2
+one_shot = true
+
+[node name="AirborneInputBufferTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.2
+one_shot = true
+
 [node name="DebugLayer" parent="." instance=ExtResource("7_noj2m")]
 
+[connection signal="timeout" from="CoyoteTimer" to="FSM/Slide" method="_on_coyote_timer_timeout"]
 [connection signal="timeout" from="IdleBufferTimer" to="FSM/Idle" method="_on_idle_buffer_timer_timeout"]
+[connection signal="timeout" from="SlideBufferTimer" to="FSM/Slide" method="_on_slide_buffer_timer_timeout"]
+[connection signal="timeout" from="MoveBufferTimer" to="FSM/Move" method="_on_move_buffer_timer_timeout"]
