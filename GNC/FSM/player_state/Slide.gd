@@ -7,14 +7,16 @@ class_name PlayerSlide
 @onready var coyote_timer = $"../../CoyoteTimer"
 @onready var collision_standing = $"../../CollisionStanding"
 @onready var collision_sliding = $"../../CollisionSliding"
+@onready var collision_shape_2d = $"../../SlideAttackArea/CollisionShape2D"
 
 var buffer_timer_started : bool = false
 var coyote_timer_started : bool = false
 var buffered : bool = false
 var can_jump : bool = true
 
-
 func stateEnter():
+	if player.velocity.x < 0:	collision_shape_2d.position.x = abs(collision_shape_2d.position.x) * -1
+	elif player.velocity.x > 0:	collision_shape_2d.position.x = abs(collision_shape_2d.position.x)
 	slide_charge_timer.start()
 	collision_sliding.disabled = false
 	collision_standing.disabled = true
@@ -42,12 +44,15 @@ func stateExit():
 	slide_buffer_timer.stop()
 	buffer_timer_started = false
 	coyote_timer_started = false
+	collision_shape_2d.disabled = true
 	buffered = false
 	can_jump = true
 
 func apply_friction(delta):
 	if abs(player.velocity.x) < 1200:
 		player.velocity.x = move_toward(player.velocity.x, 0, delta * 900)
+	else:
+		collision_shape_2d.disabled = false
 
 func transition():
 	if not Input.is_action_pressed("LM") and not Input.is_action_pressed("RM") and buffered and can_jump:

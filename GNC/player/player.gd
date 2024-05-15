@@ -11,6 +11,8 @@ var ignore_gravity : bool = false
 var max_gravity : float = 1800
 var gravity : float = 5600
 
+@onready var collision_shape_2d = $JumpAttackArea/CollisionShape2D
+
 func _physics_process(delta):
 	get_direction()
 	apply_gravity(delta)
@@ -27,7 +29,9 @@ func apply_gravity(delta):
 		
 	if velocity.y < 0:
 		gravity = 2400
+		
 	elif velocity.y > 0:
+		collision_shape_2d.disabled = true
 		gravity = 5600
 		
 func control_camera(_delta):

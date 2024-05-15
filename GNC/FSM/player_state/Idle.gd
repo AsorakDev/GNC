@@ -4,6 +4,9 @@ class_name PlayerIdle
 @onready var player = $"../.."
 @onready var idle_buffer_timer = $"../../IdleBufferTimer"
 @onready var airborne_input_buffer_timer = $"../../AirborneInputBufferTimer"
+@onready var collision_standing = $"../../CollisionStanding"
+@onready var collision_sliding = $"../../CollisionSliding"
+@onready var ray_cast_2d = $"../../RayCast2D"
 var left_pressed : bool = false
 var right_pressed : bool = false
 
@@ -13,6 +16,14 @@ func stateEnter():
 		airborne_input_buffer_timer.start()
 
 func stateUpdate(delta):
+	if not player.is_on_floor():
+		collision_sliding.disabled = false
+		collision_standing.disabled = true
+		
+	if ray_cast_2d.is_colliding():
+		collision_sliding.disabled = true
+		collision_standing.disabled = false
+		
 	apply_friction(delta)
 	transition()
 
@@ -28,6 +39,8 @@ func transition():
 		idle_buffer_timer.stop()
 		left_pressed = false
 		right_pressed = false
+		collision_sliding.disabled = true
+		collision_standing.disabled = false
 		state_transition.emit(self, "Attack")
 	
 	elif Input.is_action_pressed("LM") or Input.is_action_pressed("RM"):

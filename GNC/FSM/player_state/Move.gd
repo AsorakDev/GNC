@@ -3,11 +3,14 @@ class_name PlayerMove
 
 @onready var player = $"../.."
 @onready var move_buffer_timer = $"../../MoveBufferTimer"
+@onready var collision_standing = $"../../CollisionStanding"
+@onready var collision_sliding = $"../../CollisionSliding"
 var left_pressed : bool = false
 var right_pressed : bool = false
 
 func stateEnter():
-	pass
+	collision_sliding.disabled = true
+	collision_standing.disabled = false
 
 func stateUpdate(delta):
 	transition()
@@ -34,6 +37,10 @@ func transition():
 		state_transition.emit(self, "Slide")
 	
 	elif Input.is_action_pressed("LM") and Input.is_action_pressed("RM") and not player.is_on_floor():
+		if Input.is_action_just_pressed("LM"):
+			player.facing_direction = 1
+		elif Input.is_action_just_pressed("RM"):
+			player.facing_direction = -1
 		state_transition.emit(self, "Stomp")
 
 func _on_move_buffer_timer_timeout():

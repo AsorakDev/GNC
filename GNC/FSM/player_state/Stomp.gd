@@ -3,9 +3,13 @@ class_name PlayerStomp
 
 @onready var player = $"../.."
 @onready var stomp_charge_up_timer = $"../../StompChargeUpTimer"
+@onready var collision_standing = $"../../CollisionStanding"
+@onready var collision_sliding = $"../../CollisionSliding"
+@onready var collision_shape_2d = $"../../StompAttackArea/CollisionShape2D"
 var vel : float 
 
 func stateEnter():
+	collision_shape_2d.disabled = false
 	player.ignore_gravity = true
 	vel = player.velocity.x
 	player.velocity.x = 0.0
@@ -22,15 +26,12 @@ func stateUpdate(_delta):
 
 func stateExit():
 	player.ignore_gravity = false
+	collision_shape_2d.disabled = true
 	stomp_charge_up_timer.stop()
 
 func transition():
 	if player.is_on_floor():
 		if Input.is_action_pressed("LM") and Input.is_action_pressed("RM"):
-			if vel > 0:
-				player.velocity.x = 1200
-			elif vel < 0:
-				player.velocity.x = -1200
+			player.velocity.x = player.facing_direction * 1200
 			state_transition.emit(self, "Slide")
-		
 		state_transition.emit(self, "Idle")
