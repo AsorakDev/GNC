@@ -48,6 +48,9 @@ func transition():
 		if Input.is_action_pressed("LM"):	left_pressed = true
 		elif Input.is_action_pressed("RM"):	right_pressed = true
 		state_transition.emit(self, "Move")
+	
+	elif Input.is_action_pressed("MM"):
+		state_transition.emit(self, "Shoot")
 
 func _on_idle_buffer_timer_timeout():
 	left_pressed = false

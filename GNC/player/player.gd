@@ -1,6 +1,7 @@
 extends CharacterBody2D
 class_name Player
 
+
 var facing_direction : int = 1
 var direction : int = 0
 
@@ -12,6 +13,7 @@ var max_gravity : float = 1800
 var gravity : float = 5600
 
 @onready var collision_shape_2d = $JumpAttackArea/CollisionShape2D
+@onready var spawn_point = $SpawnPoint
 
 func _physics_process(delta):
 	get_direction()
@@ -23,6 +25,8 @@ func get_direction():
 	if is_on_floor():
 		if direction == 1:		facing_direction = 1
 		elif direction == -1:	facing_direction = -1
+	spawn_point.look_at(get_global_mouse_position())
+	
 func apply_gravity(delta):
 	if not ignore_gravity:
 		velocity.y = move_toward(velocity.y, max_gravity, delta * gravity)

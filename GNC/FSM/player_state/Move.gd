@@ -43,6 +43,9 @@ func transition():
 			player.facing_direction = -1
 		state_transition.emit(self, "Stomp")
 
+	elif Input.is_action_pressed("MM"):
+		state_transition.emit(self, "Shoot")
+
 func _on_move_buffer_timer_timeout():
 	left_pressed = false
 	right_pressed = false

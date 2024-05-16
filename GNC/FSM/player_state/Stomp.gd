@@ -6,9 +6,12 @@ class_name PlayerStomp
 @onready var collision_standing = $"../../CollisionStanding"
 @onready var collision_sliding = $"../../CollisionSliding"
 @onready var collision_shape_2d = $"../../StompAttackArea/CollisionShape2D"
+@onready var jump_collision_shape_2d = $"../../JumpAttackArea/CollisionShape2D"
+
 var vel : float 
 
 func stateEnter():
+	jump_collision_shape_2d.disabled = true
 	collision_shape_2d.disabled = false
 	player.ignore_gravity = true
 	vel = player.velocity.x

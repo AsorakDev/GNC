@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://caovinjy0dr1d"]
+[gd_scene load_steps=19 format=3 uid="uid://caovinjy0dr1d"]
 
 [ext_resource type="Script" path="res://player/player.gd" id="1_ra8as"]
 [ext_resource type="Texture2D" uid="uid://dnl5p2pqxr6lp" path="res://icon.svg" id="2_6dobr"]
@@ -9,7 +9,9 @@
 [ext_resource type="Script" path="res://FSM/player_state/Jump.gd" id="6_7x3jf"]
 [ext_resource type="Script" path="res://FSM/player_state/Attack.gd" id="6_381e1"]
 [ext_resource type="PackedScene" uid="uid://cdmg6hcebcvdw" path="res://debug/debug_layer.tscn" id="7_noj2m"]
+[ext_resource type="Script" path="res://FSM/player_state/Shoot.gd" id="8_0m7ed"]
 [ext_resource type="Script" path="res://FSM/player_state/Stomp.gd" id="9_dkhic"]
+[ext_resource type="Script" path="res://FSM/player_state/Grapple.gd" id="9_krfqr"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mp3jh"]
 radius = 40.0
@@ -22,7 +24,7 @@ radius = 40.0
 size = Vector2(200, 160)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nxk1q"]
-size = Vector2(200, 80)
+size = Vector2(200, 120)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2g0l7"]
 size = Vector2(160, 160)
@@ -78,8 +80,13 @@ position = Vector2(0, 40)
 shape = SubResource("RectangleShape2D_a6vfw")
 disabled = true
 
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, -40)
+
 [node name="JugglePoint" type="Marker2D" parent="."]
 position = Vector2(80, 0)
+
+[node name="ProjectileManager" type="Node" parent="."]
 
 [node name="FSM" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_ggq3p")
@@ -96,6 +103,12 @@ script = ExtResource("6_7x3jf")
 
 [node name="Move" type="Node" parent="FSM"]
 script = ExtResource("5_2se0c")
+
+[node name="Shoot" type="Node" parent="FSM"]
+script = ExtResource("8_0m7ed")
+
+[node name="Grapple" type="Node" parent="FSM"]
+script = ExtResource("9_krfqr")
 
 [node name="Attack" type="Node" parent="FSM"]
 script = ExtResource("6_381e1")
@@ -133,9 +146,14 @@ process_callback = 0
 wait_time = 0.3
 one_shot = true
 
+[node name="ShootChargeUpTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.15
+one_shot = true
+
 [node name="StompChargeUpTimer" type="Timer" parent="."]
 process_callback = 0
-wait_time = 0.2
+wait_time = 0.15
 one_shot = true
 
 [node name="AirborneInputBufferTimer" type="Timer" parent="."]
@@ -152,3 +170,4 @@ target_position = Vector2(0, 80)
 [connection signal="timeout" from="IdleBufferTimer" to="FSM/Idle" method="_on_idle_buffer_timer_timeout"]
 [connection signal="timeout" from="SlideBufferTimer" to="FSM/Slide" method="_on_slide_buffer_timer_timeout"]
 [connection signal="timeout" from="MoveBufferTimer" to="FSM/Move" method="_on_move_buffer_timer_timeout"]
+[connection signal="timeout" from="ShootChargeUpTimer" to="FSM/Shoot" method="_on_shoot_charge_up_timer_timeout"]
